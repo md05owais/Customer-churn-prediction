@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1677097601542,"sparkVersion":"3.3.1","uid":"OneHotEncoder_edcf81447d9a","paramMap":{"inputCol":"voice_mail_plan_indexed","outputCol":"voice_mail_plan_indexed_encoded"},"defaultParamMap":{"handleInvalid":"error","dropLast":true,"outputCol":"OneHotEncoder_edcf81447d9a__output"}}

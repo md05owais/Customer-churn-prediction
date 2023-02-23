@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1677137354033,"sparkVersion":"3.3.1","uid":"OneHotEncoder_b0c45ff9d097","paramMap":{"inputCol":"international_plan_indexed","outputCol":"international_plan_indexed_encoded"},"defaultParamMap":{"dropLast":true,"handleInvalid":"error","outputCol":"OneHotEncoder_b0c45ff9d097__output"}}
