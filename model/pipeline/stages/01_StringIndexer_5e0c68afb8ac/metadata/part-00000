@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1677137347360,"sparkVersion":"3.3.1","uid":"StringIndexer_5e0c68afb8ac","paramMap":{"outputCol":"area_code_indexed","inputCol":"area_code"},"defaultParamMap":{"outputCol":"StringIndexer_5e0c68afb8ac__output","stringOrderType":"frequencyDesc","handleInvalid":"error"}}
