@@ -21,10 +21,10 @@ from predict import read_data
 # add_bg_from_local('./data/true.png')
 
 def main():
-    st.title("Prediction of churn customers")
+    # st.title("Customer Churn Prediction")
     html_temp = """
     <div style="background-color:teal ;padding:10px">
-    <h2 style="color:yellow;text-align:center;">Churn Classification</h2>
+    <h2 style="color:yellow;text-align:center;">Customer Churn Prediction</h2>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html=True)
