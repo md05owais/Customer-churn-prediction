@@ -36,3 +36,4 @@ def read_data(data):
     predicted_df = predicted_df.withColumnRenamed('prediction', 'churn')
     predicted_df = predicted_df.withColumn('churn', when(predicted_df['churn'] == 0, 'no').otherwise('yes'))
     return predicted_df
+
