@@ -173,5 +173,5 @@ def main():
             csv_result = result.toPandas().to_csv(index=False).encode('utf-8')
             st.download_button(label='Download File', data = csv_result,file_name='Predicted_result_file.csv')
 
-
-main()
+if __name__=='__main__':
+    main()
