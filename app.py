@@ -1,58 +1,58 @@
 import streamlit as st
-import base64
 import pandas as pd
-# from predict import predict_churn
-# from predict import read_data
+from utils import _intialize_spark
+from predict import predict_churn
+from predict import read_data
 import numpy as np
 import base64
 import math
 # rf_model = RandomForestClassificationModel.read().load('./model/rf_model')
 
-def predict_churn(data, col):
-    import findspark
-    findspark.init()
-    import pyspark
-    from pyspark.sql import SparkSession
-    spark = SparkSession.builder.master("local[1]").appName("SparkByExamples.com").getOrCreate()
+# def predict_churn(data, col):
+    # import findspark
+    # findspark.init()
+    # import pyspark
+    # from pyspark.sql import SparkSession
+    # spark = SparkSession.builder.master("local[1]").appName("SparkByExamples.com").getOrCreate()
     # from pyspark.ml.classification import RandomForestClassificationModel
 
     # importing pipline and final_model
-    from pyspark.ml.tuning import CrossValidatorModel
-    from pyspark.ml import PipelineModel
-    pipeline = PipelineModel.load('./model/pipeline')
-    model = CrossValidatorModel.read().load('./model/final_model')
-    df=spark.createDataFrame(data,col)
-    model_df = pipeline.transform(df)
-    pred = model.transform(model_df)
-    prob=pred.select('probability').collect()[0][0][0]
-    prob = math.ceil(prob * 100)/100
-    output = pred.select('prediction').collect()[0][0]
+    # from pyspark.ml.tuning import CrossValidatorModel
+    # from pyspark.ml import PipelineModel
+    # pipeline = PipelineModel.load('./model/pipeline')
+    # model = CrossValidatorModel.read().load('./model/final_model')
+    # df=spark.createDataFrame(data,col)
+    # model_df = pipeline.transform(df)
+    # pred = model.transform(model_df)
+    # prob=pred.select('probability').collect()[0][0][0]
+    # prob = math.ceil(prob * 100)/100
+    # output = pred.select('prediction').collect()[0][0]
 
-    return (output, prob)
-def read_data(data):
-    import findspark
-    findspark.init()
-    import pyspark
-    from pyspark.sql import SparkSession
-    spark = SparkSession.builder.master("local[1]").appName("SparkByExamples.com").getOrCreate()
-    # from pyspark.ml.classification import RandomForestClassificationModel
+    # return (output, prob)
+# def read_data(data):
+#     import findspark
+#     findspark.init()
+#     import pyspark
+#     from pyspark.sql import SparkSession
+#     spark = SparkSession.builder.master("local[1]").appName("SparkByExamples.com").getOrCreate()
+#     # from pyspark.ml.classification import RandomForestClassificationModel
 
-    # importing pipline and final_model
-    from pyspark.ml.tuning import CrossValidatorModel
-    from pyspark.ml import PipelineModel
-    pipeline = PipelineModel.load('./model/pipeline')
-    model = CrossValidatorModel.read().load('./model/final_model')
-    from pyspark.sql.functions import expr, substring, when, col
-    df = spark.createDataFrame(data)
-    df=df.drop('id')
-    df=df.withColumn('area_code', expr("substring(area_code,11,12)"))
-    model_df = pipeline.transform(df)
-    final_res = model.transform(model_df)
+#     # importing pipline and final_model
+#     from pyspark.ml.tuning import CrossValidatorModel
+#     from pyspark.ml import PipelineModel
+#     pipeline = PipelineModel.load('./model/pipeline')
+#     model = CrossValidatorModel.read().load('./model/final_model')
+#     from pyspark.sql.functions import expr, substring, when, col
+#     df = spark.createDataFrame(data)
+#     df=df.drop('id')
+#     df=df.withColumn('area_code', expr("substring(area_code,11,12)"))
+#     model_df = pipeline.transform(df)
+#     final_res = model.transform(model_df)
 
-    predicted_df = final_res.select('state','account_length','area_code','international_plan','voice_mail_plan','number_vmail_messages','total_day_minutes','total_day_calls','total_day_charge','total_eve_minutes','total_eve_calls','total_eve_charge','total_night_minutes','total_night_calls','total_night_charge','total_intl_minutes','total_intl_calls','total_intl_charge','number_customer_service_calls','prediction')
-    predicted_df = predicted_df.withColumnRenamed('prediction', 'churn')
-    predicted_df = predicted_df.withColumn('churn', when(predicted_df['churn'] == 0, 'no').otherwise('yes'))
-    return predicted_df
+#     predicted_df = final_res.select('state','account_length','area_code','international_plan','voice_mail_plan','number_vmail_messages','total_day_minutes','total_day_calls','total_day_charge','total_eve_minutes','total_eve_calls','total_eve_charge','total_night_minutes','total_night_calls','total_night_charge','total_intl_minutes','total_intl_calls','total_intl_charge','number_customer_service_calls','prediction')
+#     predicted_df = predicted_df.withColumnRenamed('prediction', 'churn')
+#     predicted_df = predicted_df.withColumn('churn', when(predicted_df['churn'] == 0, 'no').otherwise('yes'))
+#     return predicted_df
 
 # def add_bg_from_local(image_file):
 #     with open(image_file, "rb") as image_file:
@@ -74,7 +74,7 @@ def main():
     # st.title("Customer Churn Prediction")
     html_temp = """
     <div style="background-color:teal ;padding:10px">
-    <h2 style="color:yellow;text-align:center;">Customer Churn Prediction</h2>
+    <h2 style="color:yellow;text-align:center;">Customers Churn Prediction</h2>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html=True)
@@ -169,7 +169,8 @@ def main():
         if data is not None:
             df = pd.read_csv(data)
             result = read_data(df)
-            st.dataframe(result) 
+            # st.dataframe(result) 
+            st.write(result.toPandas())
             csv_result = result.toPandas().to_csv(index=False).encode('utf-8')
             st.download_button(label='Download File', data = csv_result,file_name='Predicted_result_file.csv')
 

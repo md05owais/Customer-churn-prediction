@@ -1,12 +1,16 @@
 import numpy as np
 import base64
 import math
-import findspark
-findspark.init()
-import pyspark
-from pyspark.sql import SparkSession
-spark = SparkSession.builder.master("local[1]").appName("SparkByExamples.com").getOrCreate()
+from utils import _intialize_spark
+from pyspark.sql.types import *
 from pyspark.ml.classification import RandomForestClassificationModel
+spark, _ = _intialize_spark()
+# import findspark
+# findspark.init()
+# import pyspark
+# from pyspark.sql import SparkSession
+# spark = SparkSession.builder.master("local[1]").appName("SparkByExamples.com").getOrCreate()
+# from pyspark.ml.classification import RandomForestClassificationModel
 
 # importing pipline and final_model
 from pyspark.ml.tuning import CrossValidatorModel
