@@ -6,7 +6,7 @@ from predict import modelBuilding
 import numpy as np
 import base64
 import math
-import openpyxl
+# import openpyxl
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.express as px
