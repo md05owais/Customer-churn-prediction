@@ -37,7 +37,7 @@ def main():
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html=True)
-    activites=['EDA', 'Plot', 'Prediction','About']
+    activites=['About','EDA', 'Plot', 'Prediction']
     choices = st.sidebar.selectbox('Select Activity',activites)
     
     if(choices=='Prediction'):
@@ -110,17 +110,18 @@ def main():
                 result = predict_churn(spark_df)
                 output = result[0]
                 prob = result[1]
-                # st.success('The probability of customer being churned is {}'.format(prob))
+
+                st.success('The probability of customer being churned is {}'.format(prob))
                 churn_state = ['NJ', 'CA', 'WA', 'MD', 'MT', 'OK', 'NV', 'SC', 'TX', 'MS', 'ME', 'MN']
                 if output == 1.0:
                     st.markdown(churn_html, unsafe_allow_html= True)
                     st.write(recommendation,unsafe_allow_html=True)
-                    if international_plan == 'yes':
-                        st.markdown(recommendation1, unsafe_allow_html=True)
-                    elif (churn_state.__contains__(state)):
+                    if (churn_state.__contains__(state)):
                         st.markdown(recommendation2, unsafe_allow_html=True)
                     elif(number_customer_service_calls >=4 ) :
                         st.markdown(recommendation3, unsafe_allow_html=True)
+                    elif international_plan == 'yes':
+                        st.markdown(recommendation1, unsafe_allow_html=True)
                     else:
                         st.markdown(recommendation4, unsafe_allow_html=True)
 
@@ -232,6 +233,16 @@ def main():
                         fig = px.box(result.toPandas(), x=choosen_columns[0], y=choosen_columns[1], points="all")
                     st.write(fig)
                     st.pyplot()
+    elif choices=='About':
+        html_header ="""
+            <p style="color:red;">If you want to know about your customers who are about to churn, features wise churn rate, or deep analysis of your customers data Please select your option from sidebar activity</p>
+        """
+        st.header("What is churn prediction?")
+        st.write("Churn prediction is predicting which customers are at high risk of leaving your company or canceling a subscription to a service, based on their behavior with your product. ")
+        st.header("Why is it so important?")
+        st.write("Customer churn is a common problem across businesses in many sectors. If you want to grow as a company, you have to invest in acquiring new clients. Every time a client leaves, it represents a significant investment lost. Both time and effort need to be channelled into replacing them. Being able to predict when a client is likely to leave, and offer them incentives to stay, can offer huge savings to a business.")
+        st.markdown(html_header, unsafe_allow_html=True)
+
 
 
 

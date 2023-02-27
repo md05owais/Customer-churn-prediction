@@ -30,9 +30,15 @@ def predict_churn(df):
     model_df = pipeline.transform(df)
     pred = model.transform(model_df)
     prob=pred.select('probability').collect()[0][0][0]
-    prob = math.ceil(prob * 100)/100
+    prob1=pred.select('probability').collect()[0][0][1]
     output = pred.select('prediction').collect()[0][0]
-    return (output, prob)
+    prob_res = prob
+    if output == 1.0:
+        prob_res = max(prob,prob1)
+    else :
+        prob_res = min(prob,prob1)
+    prob_res = math.ceil(prob_res * 1000)/1000
+    return (output, prob_res)
 def modelBuilding(data):
     from pyspark.sql.functions import expr, substring, when, col
     df = spark.createDataFrame(data)
