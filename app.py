@@ -9,6 +9,7 @@ import math
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.express as px
+import io
 # def add_bg_from_local(image_file):
 #     with open(image_file, "rb") as image_file:
 #         encoded_string = base64.b64encode(image_file.read())
@@ -30,21 +31,43 @@ import plotly.express as px
 #     return result
 
 def main():
-    # st.title("Customer Churn Prediction")
+    # def add_bg_from_local(image_file):
+    #     with open(image_file, "rb") as image_file:
+    #         encoded_string = base64.b64encode(image_file.read())
+    #     st.markdown(
+    #     f"""
+    #     <style>
+    #     .stApp {{
+    #         background-color:black
+    #         background-size: cover
+    #     }} 
+    #     </style>
+    #     """,
+    #     unsafe_allow_html=True
+    # )
+    #     # background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
+    # add_bg_from_local('./data/true.png')
     html_temp = """
-    <div style="background-color:teal ;padding:10px">
-    <h2 style="color:yellow;text-align:center;">Customers Churn Prediction</h2>
+    <div>
+    <h1 style="color:yellow;text-align:center;">Customers Churn Prediction</h1>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html=True)
+    st.image('./data/dark.png', caption=None, width=800, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+# def uplaodData(data):
+#     df = pd.read_csv(data)
+#     result = read_data(df)
+    # st.title("Customer Churn Prediction")
+    
     activites=['About','EDA', 'Plot', 'Prediction']
     choices = st.sidebar.selectbox('Select Activity',activites)
     
     if(choices=='Prediction'):
         choice = st.sidebar.selectbox("How would you like to predict:", ['Online', 'Batch'])
         if(choice == 'Online'):
+            st.subheader('Please Provide the following details of cutomer')
             state = st.selectbox('Select State', ['AZ','SC','LA','MN','NJ','DC','OR','VA','RI','WY','KY','NH','MI','NV','WI','ID','CA','NE','CT','MT','NC','VT','MD','DE','MO','IL','ME','WA','ND','MS','AL','IN','OH','TN','IA','NM','PA','SD','NY','TX','WV','GA','MA','KS','FL','CO','AK','AR','OK','UT','HI'])
-            account_length = st.slider('Select total active month', 1, 250)
+            account_length = st.slider("Select total active month", 1, 250)
             area_code = st.selectbox('Enter area code', ['415','510','408'])
             international_plan = st.selectbox('Is User has international plan ?', ['yes', 'no'])
             voice_mail_plan = st.selectbox('Is user has voice mail plan ?', ['yes', 'no'])
@@ -95,7 +118,7 @@ def main():
                     """
             recommendation3 = """  
                     <div style="background-color:#F0F6EF;padding:10px;margin-top:-25px;" >
-                    <h2 style="color:black ;text-align:center;font-size:20px;"> Improve the service of call center, by taking descrete feedback from the customers</h2>
+                    <h2 style="color:black ;text-align:center;font-size:20px;"> Improve the customer care service calls, by taking descrete feedback from the customers like which type of problem you are facing, regarding network strength in his/her area </h2>
                     </div>
                     """
             recommendation4 = """  
@@ -129,6 +152,19 @@ def main():
                     st.markdown(no_churn_html, unsafe_allow_html= True)
                     st.balloons()
         else:
+            st.write('*please insure that your file contain the same features as given in the excel sheet')
+            st.write('download the features description by using this link👇')
+            # with st.echo():
+            data1 = pd.read_excel('./data/data dictionary.xlsx')
+        
+            # st.write(data1)
+            towrite = io.BytesIO()
+            downloaded_file = data1.to_excel(towrite, encoding='utf-8', index=False, header=True)
+            towrite.seek(0)  # reset pointer
+            b64 = base64.b64encode(towrite.read()).decode()  # some strings
+            linko= f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="myfilename.xlsx">👉Download excel file</a>'
+            st.markdown(linko, unsafe_allow_html=True)
+                
             data = st.file_uploader("Upload Dataset", type='CSV')
             if data is not None:
                 df = pd.read_csv(data)
@@ -177,15 +213,21 @@ def main():
             st.write(result.toPandas())
             if st.checkbox('Correlation'):
                 plt.figure(figsize=(15,12))
-                st.write(sns.heatmap(result.toPandas().corr(),annot=True,cmap='inferno'))
+                fig = sns.heatmap(result.toPandas().corr(),annot=True,cmap='inferno')
+                fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                st.write(fig)
                 st.set_option('deprecation.showPyplotGlobalUse', False)
-                st.pyplot()
+                # st.pyplot()
             if st.checkbox("Pie Chart"):
                 all_columns = result.columns
                 columns_to_plot = st.selectbox("Select Column",all_columns)
                 pie_plot = px.pie(result.groupBy(columns_to_plot).count().toPandas(), 'count')
+                pie_plot.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                pie_plot.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+
                 st.write(pie_plot)
-                st.pyplot()
+                # st.pyplot()
             all_columns = result.columns
             type_of_plot=st.selectbox('Select type of plot',['bar','histogram','scatter','box'])
             selected_columns = st.multiselect('Select columns to Plot',all_columns, default= 'churn' if all_columns.count('churn') >0 else None)
@@ -201,8 +243,11 @@ def main():
                         else :
                             choosen_columns.append(val)
                     fig = px.histogram(result.toPandas(),choosen_columns, color='churn' if selected_columns.count('churn')>0 else None, barmode='group',text_auto=True,color_discrete_sequence = ['green','red'])
+                    fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                    fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+
                     st.write(fig)
-                    st.pyplot()
+                    # st.pyplot()
                 if type_of_plot == 'bar':
                 #    column_selected = result.select(selected_columns).toPandas()
                 #    st.bar_chart(column_selected)
@@ -213,12 +258,21 @@ def main():
                         else :
                             choosen_columns.append(val)
                     fig = px.bar(result.toPandas(),choosen_columns, color='churn' if selected_columns.count('churn')>0 else None, barmode='group',text_auto=True,color_discrete_sequence = ['green','red'])
+                    fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                    fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+
                     st.write(fig)
-                    st.pyplot()
+                    # st.pyplot()
                 if type_of_plot=='scatter':
                     fig = px.scatter(result.toPandas(), selected_columns,color_discrete_sequence = ['green','red'])
+                    fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                    fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+
+                    # fig.update_xaxes(color='white')
+                    # fig.update_yaxes(color='white') 
+                    # fig.update_yaxes(color="red")
                     st.write(fig)
-                    st.pyplot()
+                    # st.pyplot(fig)
                 if type_of_plot == 'box':
                     choosen_columns = []
                     for val in selected_columns:
@@ -226,13 +280,18 @@ def main():
                             pass
                         else :
                             choosen_columns.append(val)
+                    st.set_option('deprecation.showPyplotGlobalUse', False)
                     fig = px.box(result.toPandas(), choosen_columns, points="all")
                     if len(choosen_columns)==1:
                         fig = px.box(result.toPandas(), x=choosen_columns[0], points="all")
                     if(len(choosen_columns)==2):
                         fig = px.box(result.toPandas(), x=choosen_columns[0], y=choosen_columns[1], points="all")
+                    fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                    fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+
                     st.write(fig)
-                    st.pyplot()
+
+                    # st.pyplot()
     elif choices=='About':
         html_header ="""
             <p style="color:red;">If you want to know about your customers who are about to churn, features wise churn rate, or deep analysis of your customers data Please select your option from sidebar activity</p>
@@ -252,3 +311,4 @@ def main():
 
 if __name__=='__main__':
     main()
+
