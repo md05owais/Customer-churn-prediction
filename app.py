@@ -134,16 +134,15 @@ def main():
         else:
             st.write('*please insure that your file contain the same features as given in the excel sheet')
             st.write('download the features description by using this link👇')
-            # with st.echo():
-            data1 = pd.read_excel('./data/data dictionary.xlsx')
-        
-            # st.write(data1)
-            towrite = io.BytesIO()
-            downloaded_file = data1.to_excel(towrite, encoding='utf-8', index=False, header=True)
-            towrite.seek(0)  # reset pointer
-            b64 = base64.b64encode(towrite.read()).decode()  # some strings
-            linko= f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="myfilename.xlsx">👉Download excel file</a>'
-            st.markdown(linko, unsafe_allow_html=True)
+            data1 =""
+            if data1 is not None:
+                data1 = pd.read_excel('./data/data dictionary.xlsx')
+                towrite = io.BytesIO()
+                downloaded_file = data1.to_excel(towrite, encoding='utf-8', index=False, header=True)
+                towrite.seek(0)  # reset pointer
+                b64 = base64.b64encode(towrite.read()).decode()  # some strings
+                linko= f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="myfilename.xlsx">👉Download excel file</a>'
+                st.markdown(linko, unsafe_allow_html=True)
                 
             data = st.file_uploader("Upload Dataset", type='CSV')
             if data is not None:
@@ -203,7 +202,7 @@ def main():
             if st.checkbox("Pie Chart"):
                 all_columns = result.columns
                 columns_to_plot = st.selectbox("Select Column",all_columns)
-                pie_plot = px.pie(result.groupBy(columns_to_plot).count().toPandas(), 'count')
+                pie_plot = px.pie(result.groupBy(columns_to_plot).count().toPandas(), values='count', names=columns_to_plot, title=columns_to_plot)
                 pie_plot.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
                 pie_plot.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
 
@@ -231,8 +230,7 @@ def main():
                     selected_columns = st.multiselect('Select columns to Plot',cat_columns, default= 'churn' if all_columns.count('churn') >0 else None)
                 else :
                     selected_columns = st.multiselect('Select columns to Plot',numerical_col, default= 'churn' if all_columns.count('churn') >0 else None)
-            elif((type_of_plot == 'box')):
-                selected_columns = st.selectbox('Select columns to Plot',all_columns)
+            
             else:
                 type_of_features=st.selectbox('Select Features types',['String','Nomerical'])
                 if type_of_features == 'String':
