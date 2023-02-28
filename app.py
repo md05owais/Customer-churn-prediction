@@ -32,22 +32,6 @@ import io
 #     return result
 
 def main():
-    # def add_bg_from_local(image_file):
-    #     with open(image_file, "rb") as image_file:
-    #         encoded_string = base64.b64encode(image_file.read())
-    #     st.markdown(
-    #     f"""
-    #     <style>
-    #     .stApp {{
-    #         background-color:black
-    #         background-size: cover
-    #     }} 
-    #     </style>
-    #     """,
-    #     unsafe_allow_html=True
-    # )
-    #     # background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
-    # add_bg_from_local('./data/true.png')
     html_temp = """
     <div>
     <h1 style="color:yellow;text-align:center;">Customers Churn Prediction</h1>
@@ -208,10 +192,11 @@ def main():
             result = res
             st.write(result.toPandas())
             if st.checkbox('Correlation'):
-                plt.figure(figsize=(15,12))
-                fig = sns.heatmap(result.toPandas().corr(),annot=True,cmap='inferno')
-                # fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
-                # fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                result1 = result
+                if result1.columns.__contains__('churn') :
+                    result1 = result1.drop('area_code')
+                plt.figure(figsize=(15,12)) 
+                fig = sns.heatmap(result1.toPandas().corr(),annot=True,cmap='inferno')
                 st.write(fig)
                 st.set_option('deprecation.showPyplotGlobalUse', False)
                 st.pyplot()
