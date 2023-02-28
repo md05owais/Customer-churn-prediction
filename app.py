@@ -55,11 +55,6 @@ def main():
     """
     st.markdown(html_temp, unsafe_allow_html=True)
     st.image('./data/dark.png', caption=None, width=800, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
-# def uplaodData(data):
-#     df = pd.read_csv(data)
-#     result = read_data(df)
-    # st.title("Customer Churn Prediction")
-    
     activites=['About','EDA', 'Plot', 'Prediction']
     choices = st.sidebar.selectbox('Select Activity',activites)
     
@@ -215,11 +210,11 @@ def main():
             if st.checkbox('Correlation'):
                 plt.figure(figsize=(15,12))
                 fig = sns.heatmap(result.toPandas().corr(),annot=True,cmap='inferno')
-                fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
-                fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                # fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
+                # fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
                 st.write(fig)
                 st.set_option('deprecation.showPyplotGlobalUse', False)
-                # st.pyplot()
+                st.pyplot()
             if st.checkbox("Pie Chart"):
                 all_columns = result.columns
                 columns_to_plot = st.selectbox("Select Column",all_columns)
@@ -231,8 +226,36 @@ def main():
                 # st.pyplot()
             all_columns = result.columns
             type_of_plot=st.selectbox('Select type of plot',['bar','histogram','scatter','box'])
-            selected_columns = st.multiselect('Select columns to Plot',all_columns, default= 'churn' if all_columns.count('churn') >0 else None)
+            
+            cat_columns = []
+            numerical_col = []
+            for col_ in all_columns:
+                if col_ == 'churn':
+                    cat_columns.append('churn')
+                    numerical_col.append('churn')
+                    continue
+                if (result.select(col_).dtypes[0][1]=='string'):
+                    cat_columns.append(col_)
+                else:
+                    numerical_col.append(col_)
+            selected_columns=[]
+            type_of_features=""
+            if((type_of_plot == 'histogram') | (type_of_plot == 'histogram')):
+                type_of_features=st.selectbox('Select Features types',['String','Nomerical'])
+                if type_of_features == 'String':
+                    selected_columns = st.multiselect('Select columns to Plot',cat_columns, default= 'churn' if all_columns.count('churn') >0 else None)
+                else :
+                    selected_columns = st.multiselect('Select columns to Plot',numerical_col, default= 'churn' if all_columns.count('churn') >0 else None)
+            elif((type_of_plot == 'box')):
+                selected_columns = st.selectbox('Select columns to Plot',all_columns)
+            else:
+                type_of_features=st.selectbox('Select Features types',['String','Nomerical'])
+                if type_of_features == 'String':
+                    selected_columns = st.multiselect('Select columns to Plot',cat_columns)
+                else :
+                    selected_columns = st.multiselect('Select columns to Plot',numerical_col)
             if st.button('Generate Plot'):
+                color = ['green','red','white','blue','yellow','pink']
                 st.success('Generating {} plot for {}'.format(type_of_plot,selected_columns))
                 if type_of_plot == 'histogram':
                 #    column_selected = result.select(selected_columns).toPandas()
@@ -243,10 +266,10 @@ def main():
                             pass
                         else :
                             choosen_columns.append(val)
-                    fig = px.histogram(result.toPandas(),choosen_columns, color='churn' if selected_columns.count('churn')>0 else None, barmode='group',text_auto=True,color_discrete_sequence = ['green','red'])
+                    fig = px.histogram(result.toPandas(),choosen_columns, color='churn' if selected_columns.count('churn')>0 else None, barmode='group',text_auto=True,color_discrete_sequence = color)
+                    
                     fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
                     fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
-
                     st.write(fig)
                     # st.pyplot()
                 if type_of_plot == 'bar':
@@ -265,6 +288,7 @@ def main():
                     st.write(fig)
                     # st.pyplot()
                 if type_of_plot=='scatter':
+                    
                     fig = px.scatter(result.toPandas(), selected_columns,color_discrete_sequence = ['green','red'])
                     fig.update_xaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
                     fig.update_yaxes(showline=True, linewidth=2, linecolor='#FFFFFF', mirror=False)
