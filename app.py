@@ -49,7 +49,7 @@ def main():
             state = st.selectbox('Select State', ['AZ','SC','LA','MN','NJ','DC','OR','VA','RI','WY','KY','NH','MI','NV','WI','ID','CA','NE','CT','MT','NC','VT','MD','DE','MO','IL','ME','WA','ND','MS','AL','IN','OH','TN','IA','NM','PA','SD','NY','TX','WV','GA','MA','KS','FL','CO','AK','AR','OK','UT','HI'])
             account_length = st.slider("Select total active month", 1, 250)
             area_code = st.selectbox('Enter area code', ['415','510','408'])
-            international_plan = st.selectbox('Is User has international plan ?', ['yes', 'no'])
+            international_plan = st.selectbox('Is User has international plan ?', ['no', 'yes'])
             voice_mail_plan = st.selectbox('Is user has voice mail plan ?', ['yes', 'no'])
             number_vmail_messages = st.number_input('Enter Total Number of voice mail',min_value=0)
             total_day_minutes = st.number_input('Enter Total day minutes',min_value=0.0)
@@ -119,10 +119,10 @@ def main():
                 if output == 1.0:
                     st.markdown(churn_html, unsafe_allow_html= True)
                     st.write(recommendation,unsafe_allow_html=True)
-                    if (churn_state.__contains__(state)):
-                        st.markdown(recommendation2, unsafe_allow_html=True)
-                    elif(number_customer_service_calls >=4 ) :
+                    if(number_customer_service_calls >=4 ) :
                         st.markdown(recommendation3, unsafe_allow_html=True)
+                    elif (churn_state.__contains__(state)):
+                        st.markdown(recommendation2, unsafe_allow_html=True)
                     elif international_plan == 'yes':
                         st.markdown(recommendation1, unsafe_allow_html=True)
                     else:
