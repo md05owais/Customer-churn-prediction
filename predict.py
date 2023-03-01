@@ -41,16 +41,19 @@ def predict_churn(df):
     return (output, prob_res)
 def modelBuilding(data):
     from pyspark.sql.functions import expr, substring, when, col
-    df = spark.createDataFrame(data)
-    df1=df.drop('id')
-    df1=df1.withColumn('area_code', expr("substring(area_code,11,12)"))
-    model_df = pipeline.transform(df1)
-    final_res = model.transform(model_df)
+    try:
+        df = spark.createDataFrame(data)
+        df1=df.drop('id')
+        df1=df1.withColumn('area_code', expr("substring(area_code,11,12)"))
+        model_df = pipeline.transform(df1)
+        final_res = model.transform(model_df)
 
-    predicted_df = final_res.select('state','account_length','area_code','international_plan','voice_mail_plan','number_vmail_messages','total_day_minutes','total_day_calls','total_day_charge','total_eve_minutes','total_eve_calls','total_eve_charge','total_night_minutes','total_night_calls','total_night_charge','total_intl_minutes','total_intl_calls','total_intl_charge','number_customer_service_calls','prediction')
-    predicted_df = predicted_df.withColumnRenamed('prediction', 'churn')
-    predicted_df = predicted_df.withColumn('churn', when(predicted_df['churn'] == 0, 'no').otherwise('yes'))
-    return (predicted_df,df)
+        predicted_df = final_res.select('state','account_length','area_code','international_plan','voice_mail_plan','number_vmail_messages','total_day_minutes','total_day_calls','total_day_charge','total_eve_minutes','total_eve_calls','total_eve_charge','total_night_minutes','total_night_calls','total_night_charge','total_intl_minutes','total_intl_calls','total_intl_charge','number_customer_service_calls','prediction')
+        predicted_df = predicted_df.withColumnRenamed('prediction', 'churn')
+        predicted_df = predicted_df.withColumn('churn', when(predicted_df['churn'] == 0, 'no').otherwise('yes'))
+        return (predicted_df,df)
+    except:
+        return ('Error',"Your features not matched with requirements please follow the requirements as given in the link provided above")
 def countNullValues(df):
     from pyspark.sql.functions import isnan, count, when, col, expr, substring
     total_col = df.columns

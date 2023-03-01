@@ -149,10 +149,15 @@ def main():
                 df = pd.read_csv(data)
                 res = modelBuilding(df)
                 result = res[0]
+                if(result == 'Error'):
+                    st.markdown("""
+                    <p style="color:red ;text-align:center;font-size:16px;">Your features not matched with requirements please follow the requirements as given in the link provided above</p>
+                    """, unsafe_allow_html=True)
+                else:
                 # st.dataframe(result) 
-                st.write(result.toPandas())
-                csv_result = result.toPandas().to_csv(index=False).encode('utf-8')
-                st.download_button(label='Download File', data = csv_result,file_name='Predicted_result_file.csv')
+                    st.write(result.toPandas())
+                    csv_result = result.toPandas().to_csv(index=False).encode('utf-8')
+                    st.download_button(label='Download File', data = csv_result,file_name='Predicted_result_file.csv')
     elif(choices=='EDA'):
         st.subheader("Exploratory Data Analysis")
         data = st.file_uploader("Upload Dataset", type='CSV')
